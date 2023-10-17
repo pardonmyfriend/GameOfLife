@@ -12,7 +12,7 @@ class Plansza(object):
         background = (0,0,0)
         self.surface.fill(background)
         for drawable in args:
-            drawable.draw_on(self.surface)
+            drawable.rysujemy(self.surface)
         pygame.display.update()
 
 class GraConwaya(object):
@@ -20,29 +20,19 @@ class GraConwaya(object):
         pygame.init()
         self.board = Plansza(width * cellsize, height * cellsize)
         self.fps_clock = pygame.time.Clock()
+        self.population = Populacja(width, height, cellsize)
     def uruchom(self):
         while not self.event():
-            self.board.rysuj()
+            self.board.rysuj(self.population)
             self.fps_clock.tick(15)
     def event(self):
         for event in pygame.event.get():
             if event.type == pygame.locals.QUIT:
                 pygame.quit()
                 return True
-    def rysujemy(self, surface):
-        for x, y in self.zyjace_komorki():
-            size = (self.box_size, self.box_size)
-            position = (x * self.box_size, y * self.box_size)
-            color = (255, 255, 255)
-            thickness = 1
-            pygame.draw.rect(surface, color, pygame.locals.Rect(position, size), thickness)
-
-    def zyjace_komorki(self):
-        for x in range(len(self.generation)):
-            column = self.generation[x]
-            for y in range(len(column)):
-                if column[y] == PELNA_ZYCIA:
-                    yield x, y
+            from pygame.locals import MOUSEMOTION, MOUSEBUTTONDOWN
+            if event.type == MOUSEMOTION or event.type == MOUSEBUTTONDOWN:
+                self.population.myszka()
 class Populacja(object):
     def __init__(self, width, height, cellsize = 10):
         self.box_size = cellsize
@@ -60,6 +50,19 @@ class Populacja(object):
         x /= self.box_size
         y /= self.box_size
         self.generation[int(x)][int(y)] = PELNA_ZYCIA if zyjace else UMARTA
+    def rysujemy(self, surface):
+        for x, y in self.zyjace_komorki():
+            size = (self.box_size, self.box_size)
+            position = (x * self.box_size, y * self.box_size)
+            color = (255, 255, 255)
+            thickness = 1
+            pygame.draw.rect(surface, color, pygame.locals.Rect(position, size), thickness)
+    def zyjace_komorki(self):
+        for x in range(len(self.generation)):
+            column = self.generation[x]
+            for y in range(len(column)):
+                if column[y] == PELNA_ZYCIA:
+                    yield x, y
 if __name__ == "__main__":
     game = GraConwaya(80, 40)
     game.uruchom()
