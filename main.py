@@ -24,6 +24,8 @@ class GraConwaya(object):
     def uruchom(self):
         while not self.event():
             self.board.rysuj(self.population)
+            if getattr(self, "started", None):
+                self.population.nowageneracja()
             self.fps_clock.tick(15)
     def event(self):
         for event in pygame.event.get():
@@ -33,6 +35,9 @@ class GraConwaya(object):
             from pygame.locals import MOUSEMOTION, MOUSEBUTTONDOWN
             if event.type == MOUSEMOTION or event.type == MOUSEBUTTONDOWN:
                 self.population.myszka()
+            from pygame.locals import KEYDOWN, K_RETURN
+            if event.type == KEYDOWN and event.key == K_RETURN:
+                self.started = True
 class Populacja(object):
     def __init__(self, width, height, cellsize = 10):
         self.box_size = cellsize
@@ -63,6 +68,33 @@ class Populacja(object):
             for y in range(len(column)):
                 if column[y] == PELNA_ZYCIA:
                     yield x, y
+    def sasiedzi(self, x, y):
+        for nx in range(x - 1, x + 2):
+            for ny in range(y - 1, y + 2):
+                if nx == x and ny == y:
+                    continue
+                if nx >= self.width:
+                    nx = 0
+                elif nx < 0:
+                    nx = self.width - 1
+                if ny >= self.height:
+                    ny = 0
+                elif ny < 0:
+                    ny = self.height - 1
+                yield self.generation[nx][ny]
+    def nowageneracja(self):
+        next_gen = self.restart()
+        for x in range(len(self.generation)):
+            column = self.generation[x]
+            for y in range(len(column)):
+                count = sum(self.sasiedzi(x, y))
+                if count == 3:
+                    next_gen[x][y] = PELNA_ZYCIA
+                elif count == 2:
+                    next_gen[x][y] = column[y]
+                else:
+                    next_gen[x][y] = UMARTA
+        self.generation = next_gen
 if __name__ == "__main__":
     game = GraConwaya(80, 40)
     game.uruchom()
