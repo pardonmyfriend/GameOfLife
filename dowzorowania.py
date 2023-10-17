@@ -16,7 +16,7 @@ class Plansza(object):
         pygame.display.update()
 
 class GraConwaya(object):
-    def __init__(self, width, height, cellsize = 10):
+    def __init__(self, width, height, cellsize = 15):
         pygame.init()
         self.board = Plansza(width * cellsize, height * cellsize)
         self.fps_clock = pygame.time.Clock()
@@ -38,8 +38,10 @@ class GraConwaya(object):
             from pygame.locals import KEYDOWN, K_RETURN
             if event.type == KEYDOWN and event.key == K_RETURN:
                 self.started = True
+            if event.type == KEYDOWN and event.key == K_SPACE:
+                self.started = False
 class Populacja(object):
-    def __init__(self, width, height, cellsize = 10):
+    def __init__(self, width, height, cellsize = 15):
         self.box_size = cellsize
         self.height = height
         self.width = width
@@ -61,7 +63,7 @@ class Populacja(object):
             position = (x * self.box_size, y * self.box_size)
             color = (255, 255, 255)
             thickness = 1
-            pygame.draw.rect(surface, color, pygame.locals.Rect(position, size), thickness)
+            pygame.draw.rect(surface, color, pygame.locals.Rect(position, size))
     def zyjace_komorki(self):
         for x in range(len(self.generation)):
             column = self.generation[x]
@@ -96,5 +98,5 @@ class Populacja(object):
                     next_gen[x][y] = UMARTA
         self.generation = next_gen
 if __name__ == "__main__":
-    game = GraConwaya(80, 40)
+    game = GraConwaya(50, 50)
     game.uruchom()
