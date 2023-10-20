@@ -1,5 +1,4 @@
 import pygame
-import random
 
 
 class Board:
@@ -36,10 +35,15 @@ class Board:
         return cells
 
     def draw_window(self):
+        font1 = pygame.font.SysFont("calibri", 34)
+        img1 = font1.render("Click on the cells you want to make alive", True, (99, 100, 98))
+        img2 = font1.render("Press SPACE to start/stop the simulation", True, (99, 100, 98))
         win = pygame.display.set_mode((self.width, self.height))
         grid = (255, 255, 255)
         win.fill(grid)
         pygame.display.set_caption("Game Of Life")
+        win.blit(img1, (25, 610))
+        win.blit(img2, (30, 650))
         return win
 
     def draw_cells(self, cells, win):
@@ -75,7 +79,6 @@ class Board:
                 alive_n_counter = 0
                 # check neighbours above and under
                 for r in range(cells.index(row) - 1, cells.index(row) + 2, 2):
-                # r = cells.index(row) + 1
                     if r >= 0 and r <= (self.rows - 1):
                         for c in range(row.index(column) - 1, row.index(column) + 2, 1):
                             if c >= 0 and c <= (self.columns - 1):
@@ -89,14 +92,6 @@ class Board:
                         state = cells[r][c][0]
                         if state == 1:
                             alive_n_counter += 1
-                # check neighbours under
-                # r = cells.index(row) - 1
-                # if r >= 0 and r <= (self.rows - 1):
-                #     for c in range(row.index(column) - 1, row.index(column) + 2, 1):
-                #         if c >= 0 and c <= (self.columns - 1):
-                #             state = cells[r][c][0]
-                #             if state == 1:
-                #                 alive_n_counter += 1
                 c_state = column[0]
                 if c_state == 1:
                     if alive_n_counter != 2 and alive_n_counter != 3:
@@ -112,11 +107,11 @@ class Board:
         return cells
 
     def initialize(self):
+        pygame.init()
         self.width = 600
-        self.height = 600
+        self.height = 700
         win = self.draw_window()
         start = False
-        pygame.init()
         run = True
         cells = self.generate_cells(20, 20)
         self.draw_cells(cells, win)
@@ -127,7 +122,6 @@ class Board:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     self.change_state(cells, pos[0], pos[1], win)
-                    print("Myszka")
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         start = not start
