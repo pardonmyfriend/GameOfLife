@@ -31,7 +31,6 @@ class Board:
                 x += cell_width
             y += cell_height
             cells.append(row)
-        print(cells)
         return cells
 
     def draw_window(self):
