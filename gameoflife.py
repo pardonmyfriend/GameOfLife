@@ -9,10 +9,9 @@ class GameOfLife:
         self.width = width
         self.height = height
         self.cell_size = cell_size
-        self.screen = pygame.display.set_mode((width, height+100))
+        self.screen = pygame.display.set_mode((width, height+120))
         pygame.display.set_caption("John Conway's Game of Life")
         self.grid = np.zeros((height // cell_size, width // cell_size), dtype=int)
-        self.legend_rect = pygame.Rect(10, 10, 200, 120)
         self.running = False
 
     def handle_events(self):
@@ -61,8 +60,8 @@ class GameOfLife:
         return np.sum(self.grid[row - 1:row + 2, col - 1:col + 2]) - self.grid[row, col]
 
     def draw(self):
-        color_alive = (255, 255, 215)
-        color_dead = (10, 10, 10)
+        color_alive = (88, 100, 112)
+        color_dead = (195, 194, 208)
         for row in range(self.grid.shape[0]):
             for col in range(self.grid.shape[1]):
                 color = color_alive if self.grid[row, col] == 1 else color_dead
@@ -79,13 +78,13 @@ class GameOfLife:
         ]
 
         for i, text in enumerate(legend_text):
-            text_surface = font.render(text, True, (255, 255, 255))
-            self.screen.blit(text_surface, (10, 400 + i * 25))
+            text_surface = font.render(text, True, (88, 100, 112))
+            self.screen.blit(text_surface, (10, 410 + i * 25))
 
     def run(self):
         while True:
             self.handle_events()
-            self.screen.fill((40, 40, 40))
+            self.screen.fill((234, 234, 236))
             if self.running:
                 self.update()
             self.draw()
